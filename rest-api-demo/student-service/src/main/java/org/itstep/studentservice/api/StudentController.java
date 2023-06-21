@@ -61,10 +61,12 @@ public class StudentController {
         String checkStudent = checkStudent(student);
         if (checkStudent.equals("")) {
             try {
-                var savedStudent = studentRepository.save(student);
-                return ResponseEntity
-                        .created(URI.create("/api/v1/student/%s".formatted(savedStudent.getId())))
-                        .build();
+                if (!bindingResult.hasErrors()){
+                    var savedStudent = studentRepository.save(student);
+                    return ResponseEntity
+                            .created(URI.create("/api/v1/student/%s".formatted(savedStudent.getId())))
+                            .build();
+                }
             } catch (Exception exception) {
                 log.error(exception.getMessage(), exception);
                 throw exception;
@@ -94,7 +96,7 @@ public class StudentController {
             studentTmp.setPhone(student.getPhone());
             studentTmp.setEmail(student.getEmail());
             String checkStudent = checkStudent(studentTmp);
-            if (checkStudent.equals("")) {
+            if (checkStudent.equals("") && !bindingResult.hasErrors()) {
                 studentRepository.save(studentTmp);
                 return new ResponseEntity<>(studentTmp, HttpStatus.OK);
             } else {
