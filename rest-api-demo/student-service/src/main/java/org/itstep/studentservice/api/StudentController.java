@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -55,7 +57,7 @@ public class StudentController {
     @PostMapping(consumes = {
             MediaType.APPLICATION_XML_VALUE,
             MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> save(@RequestBody Student student) {
+    public ResponseEntity<?> save(@Validated @RequestBody Student student, BindingResult bindingResult) {
         String checkStudent = checkStudent(student);
         if (checkStudent.equals("")) {
             try {
@@ -78,7 +80,8 @@ public class StudentController {
     // update students
     @PutMapping("{id}")
     public ResponseEntity<?> update(@PathVariable Integer id,
-                                    @RequestBody Student student) {
+                                   @Validated @RequestBody Student student,
+                                    BindingResult bindingResult) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setTitle("Error update student");
 
